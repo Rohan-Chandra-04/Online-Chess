@@ -22,7 +22,7 @@ export class GameManager{
     addHandler (socket){
         socket.on("message", (data) => {
             const message = JSON.parse(data.toString());
-
+            console.log("Received message:", message);
             if (message.type == INIT_GAME){
                 if (this.pendingUser){
                     const game = new Game(this.pendingUser, socket);
@@ -35,9 +35,11 @@ export class GameManager{
             }
 
             if (message.type == MOVE){
+                console.log("if it is activated, our makeMove");
                 const game = this.games.find(game => game.player1==socket || game.player2==socket);
                 if (game){
-                    game.makeMove(socket, message.move);
+                    console.log("Game found for move", message.payload);
+                    game.makeMove(socket, message.payload);
                 }
             }
         })

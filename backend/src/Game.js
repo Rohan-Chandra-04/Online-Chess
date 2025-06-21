@@ -18,24 +18,38 @@ export class Game{
         this.player1.send(JSON.stringify({
             type: INIT_GAME,
             payload: {
-                color: 'white'
+                color: 'w'
             }
         }))
 
         this.player2.send(JSON.stringify({
             type: INIT_GAME,
             payload: {
-                color: 'black'
+                color: 'b'
             }
         }))
+        console.log('game initiated....');
     }
 
     makeMove(socket, move){
+        console.log("received move", move);
         if (this.moveCount % 2 === 0 && this.player1 !== socket){
+            this.player2.send(JSON.stringify({
+                type: MOVE,
+                payload: {
+                    error: "It's not your turn!"
+                }
+            }));
             return;
         }
 
         if (this.moveCount % 2 === 1 && this.player2 !== socket){
+            this.player1.send(JSON.stringify({
+                type: MOVE,
+                payload: {
+                    error: "It's not your turn!"
+                }
+            }));
             return;
         }
 
@@ -63,17 +77,17 @@ export class Game{
             return;
         }
 
-        if (this.moveCount % 2 === 0){
+        // if (this.moveCount % 2 === 0){
             this.player2.send(JSON.stringify({
                 type: MOVE,
                 payload: move
             }))
-        }else{
+        // }else{
             this.player1.send(JSON.stringify({
                 type: MOVE,
                 payload: move
             }))
-        }
+        // }
 
         this.moveCount++;
     }
