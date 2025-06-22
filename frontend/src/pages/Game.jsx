@@ -10,6 +10,7 @@ function Game() {
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
   const [playerColor, setPlayerColor] = useState(null);
+  const [captured, setCaptured] = useState([]);
 
   useEffect(() => {
     if (!socket) return;
@@ -33,8 +34,11 @@ function Game() {
             alert(`Error: ${message.payload.error}`);
             return;
           }
-          const updated = chess.move(move);
-          if (updated) {
+          const moveMade = chess.move(move);
+          if (moveMade) {
+            if (moveMade.captured) {
+              setCaptured((prev)=> [...prev, `${moveMade.color}_${moveMade.captured}`]);
+            }
             setBoard(chess.board());
             console.log('Move applied:', move);
           } else {
@@ -63,19 +67,29 @@ function Game() {
 
   return (
     <div className="flex justify-center bg-gray-700 h-screen">
-      <div className="pt-5 max-w-screen-lg">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
+      <div className="pt-5 w-full">
+        {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> */}
+        <div className=" flex flex-col md:flex-row w-full">
+          <div className="w-1/2 h-screen border-b">
             <ChessBoard board={board} socket={socket} chess={chess} setBoard={setBoard} playerColor={playerColor}/>
           </div>
-          <div>
+          <div className = "w-1/2 p-12">
             <Button
               onClick={() => {
                 socket.send(JSON.stringify({ type: INIT_GAME }));
               }}
             >
-              Play Now!
+              {playerColor ? `Your ${playerColor} King!`: 'Play Now!'}
             </Button>
+
+            <div className="captured-pieces w-full flex flex-wrap">
+              <h3 className="mt-6 text-4xl"> Captured Pieces : </h3>
+              {captured.map((piece, i) => (
+                <div className="p-8 w-1/12">
+                  <img src={`${piece}.png`} alt="" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
