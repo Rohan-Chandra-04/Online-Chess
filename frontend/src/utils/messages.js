@@ -4,3 +4,5 @@ export const MOVE = "move";
 
 export const GAME_OVER = "game_over";
 
+export const WITH_DRAW = "with_draw";
+

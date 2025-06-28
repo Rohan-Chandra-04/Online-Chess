@@ -20,19 +20,40 @@ export class Game{
             payload: {
                 color: 'w'
             }
-        }))
+        }));
 
         this.player2.send(JSON.stringify({
             type: INIT_GAME,
             payload: {
                 color: 'b'
             }
-        }))
+        }));
         console.log('game initiated....');
     }
 
     makeMove(socket, move){
         console.log("received move", move);
+
+        if (this.player1 === null) {
+            this.player2.send(JSON.stringify({
+                type : WITH_DRAW,
+                payload: {
+                    winner: "Congrats! You won the game"
+                }
+            }));
+            return;
+        }
+
+        if (this.player2 === null) {
+            this.player1.send(JSON.stringify({
+                type : WITH_DRAW,
+                payload: {
+                    winner: "Congrats! You won the game"
+                }
+            }));
+            return;
+        }
+
         if (this.moveCount % 2 === 0 && this.player1 !== socket){
             this.player2.send(JSON.stringify({
                 type: MOVE,
@@ -77,17 +98,16 @@ export class Game{
             return;
         }
 
-        // if (this.moveCount % 2 === 0){
+        
             this.player2.send(JSON.stringify({
                 type: MOVE,
                 payload: move
             }))
-        // }else{
+        
             this.player1.send(JSON.stringify({
                 type: MOVE,
                 payload: move
             }))
-        // }
 
         this.moveCount++;
     }

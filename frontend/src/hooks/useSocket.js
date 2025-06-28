@@ -1,33 +1,31 @@
-import {useState, useEffect} from 'react';
-const WS_URL = 'ws://localhost:8080';
+import { useState, useEffect } from 'react';
 
-export const useSocket = () => {
-    const [socket, setSocket] = useState(null);
+export const useSocket = (token) => {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!token) return;
+    console.log('Connecting to WebSocket with token:', token);
+    const ws = new WebSocket(`ws://localhost:3000?token=${token}`);
     
-    useEffect(() => {
-        const newSocket = new WebSocket(WS_URL); 
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
+      setSocket(ws);
+    };
 
-        newSocket.onopen = () => {
-            console.log('WebSocket connection established');
-            console.log('coooool')
-            setSocket(newSocket);
-        };
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+      setSocket(null);
+    };
 
-        newSocket.onclose = () => {
-            console.log('very sad');
-            console.log('WebSocket connection closed');
-            setSocket(null);
-        };
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
-        newSocket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-        
-        
-        return () => {
-            newSocket.close();
-        };
-    }, []);
-    
-    return socket;
-}
+    return () => {
+      ws.close();
+    };
+  }, [token]);
+
+  return socket;
+};
