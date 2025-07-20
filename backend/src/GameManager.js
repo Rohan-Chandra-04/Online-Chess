@@ -1,4 +1,4 @@
-import { INIT_GAME, MOVE } from "./messages.js";
+import { INIT_GAME, MOVE, GAME_OVER, WITH_DRAW } from "./messages.js";
 import {Game} from "./Game.js"
 
 export class GameManager{
@@ -17,6 +17,19 @@ export class GameManager{
 
     removeUser(socket){
         this.users = this.users.filter(user => user!==socket);
+        
+        // Handle disconnection for games
+        const game = this.games.find(game => game.player1 === socket || game.player2 === socket);
+        if (game) {
+            game.handlePlayerDisconnection(socket);
+            // Remove the game from active games
+            this.games = this.games.filter(g => g !== game);
+        }
+        
+        // Handle disconnection for pending user
+        if (this.pendingUser === socket) {
+            this.pendingUser = null;
+        }
     }
 
     addHandler (socket){
@@ -42,7 +55,19 @@ export class GameManager{
                     game.makeMove(socket, message.payload);
                 }
             }
-        })
+        });
+
+        // Handle socket disconnection
+        socket.on("close", () => {
+            console.log("Player disconnected");
+            this.removeUser(socket);
+        });
+
+        // Handle socket errors
+        socket.on("error", (error) => {
+            console.log("Socket error:", error);
+            this.removeUser(socket);
+        });
     }
 
 }

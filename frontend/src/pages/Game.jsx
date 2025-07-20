@@ -51,7 +51,7 @@ function Game() {
           const moveMade = chess.move(move);
           if (moveMade) {
             if (moveMade.captured) {
-              setCaptured((prev) => [...prev, `${moveMade.color}_${moveMade.captured}`]);
+              setCaptured((prev) => [...prev, `${moveMade.color==='w'?'b':'w'}_${moveMade.captured}`]);
             }
             setBoard(chess.board());
           }
@@ -59,9 +59,11 @@ function Game() {
         }
         case GAME_OVER:
           console.log('Game over:', message.data);
+          alert('Game over! ', message.data);
           break;
         case WITH_DRAW:
           console.log('Opponent resigned');
+          alert('Opponent resigned!');
           break;
         default:
           console.warn('Unknown message type:', message.type);
