@@ -2,7 +2,7 @@
 
 ## 🧩 Core Classes and Their Relationships
 
-<img src="low_level_design.png" alt="Alt text" width="400"/>
+<img src="frontend/public/low_level_design.png" alt="Alt text" width="400"/>
 
 ## ✅ Design Strengths
 
@@ -17,12 +17,12 @@
 
 ### Login Page:
 
-<img src="chess_login_page.png" alt="Image of login page" width="400"/>
+<img src="frontend/public/chess_login_page.png" alt="Image of login page" width="400"/>
 
 
 ### Game Page:
 
-<img src="chess_game.png" alt="Image of Chess game page" width="400"/>
+<img src="frontend/public/chess_game.png" alt="Image of Chess game page" width="400"/>
 
 
 
